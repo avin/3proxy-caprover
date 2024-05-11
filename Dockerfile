@@ -1,5 +1,4 @@
 FROM alpine:3.5
-MAINTAINER Avin Lambrero <avin.github@gmail.com>
 
 # Install base packages
 RUN apk update && apk add git build-base linux-headers
@@ -20,13 +19,14 @@ ARG LOGIN=${LOGIN}
 ARG PASSWORD=${PASSWORD}
 ARG PORT=3128
 
+ENV LOGIN=$LOGIN
+ENV PASSWORD=$PASSWORD
+ENV PORT=$PORT
+
 # Install  and setup config file
 ADD 3proxy.cfg /usr/local/etc/3proxy/
+ADD entrypoint.sh /entrypoint.sh
+
 WORKDIR /usr/local/etc/3proxy/
-RUN sed -i 's/_LOGIN_/'"$LOGIN"'/g' 3proxy.cfg && \
-    sed -i 's/_PASSWORD_/'"$PASSWORD"'/g' 3proxy.cfg && \
-    sed -i 's/_PORT_/'"$PORT"'/g' 3proxy.cfg
 
-EXPOSE $PORT
-
-CMD 3proxy /usr/local/etc/3proxy/3proxy.cfg
+CMD ["/entrypoint.sh"]
